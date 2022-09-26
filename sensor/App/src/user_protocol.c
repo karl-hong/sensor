@@ -252,6 +252,7 @@ void user_protocol_handle(void)
 	}
 }
 
+extern uint8_t g_uart2_send_data_enable;
 void user_protocol_send_data(uint8_t cmd, uint8_t optID, uint8_t *data, uint16_t size)
 {
 	Pack_t packet;
@@ -270,6 +271,7 @@ void user_protocol_send_data(uint8_t cmd, uint8_t optID, uint8_t *data, uint16_t
 	ComPack(&packet, &output);
 	
 	AppUart2SendData(output.pBuffer, output.nLenOfBuf);
+	g_uart2_send_data_enable = 1;
 }
 
 

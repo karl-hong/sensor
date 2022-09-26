@@ -24,6 +24,8 @@
 #include "stdio.h"
 #include "app_uart.h"
 #include "crc8_16.h"
+#include "user_protocol.h"
+#include "common.h"
 #define BSP_USART1_RX_MAX_LEN   32
 
 //static uint8_t RxBuffer[BSP_USART1_RX_MAX_LEN] = {0};
@@ -31,6 +33,7 @@
 uint8_t u8Uart2RxData = 0;
 uint8_t u8Uart2Data[7];
 extern uint32_t u32ReportCnt;
+extern void appUart2RxCallBack(void);
 
 void AppUart2RxDMA_CPLT_CB( DMA_HandleTypeDef * _hdma);
 
@@ -229,7 +232,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart2_rx);
 
     /* USART2 interrupt Init */
-    HAL_NVIC_SetPriority(USART2_IRQn, 5, 0);
+    HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(USART2_IRQn);
   /* USER CODE BEGIN USART2_MspInit 1 */
 
@@ -353,6 +356,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //		static uint32_t cnt =0;
 //	cnt ++;
 //	HAL_UART_Receive_IT(&huart2, (uint8_t *)&u8Uart2RxData, 1);
+#if !USART2_USE_DMA	
+	if(huart->Instance == USART2){
+		appUart2RxCallBack();
+	}
+#endif	
 }
 
 void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)

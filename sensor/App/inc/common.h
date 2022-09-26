@@ -3,6 +3,8 @@
 #include "stdint.h"
 #include "stdio.h"
 
+#define USART2_USE_DMA				0
+
 typedef struct {
 	int16_t x;
 	int16_t y;
