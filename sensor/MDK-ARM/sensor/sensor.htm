@@ -3,7 +3,7 @@
 <title>Static Call Graph - [sensor\sensor.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image sensor\sensor.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Sat Oct 01 11:20:50 2022
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Sat Oct 01 11:46:53 2022
 <BR><P>
 <H3>Maximum Stack Usage =        748 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -582,8 +582,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DHT20_Task
 </UL>
 
-<P><STRONG><a name="[50]"></a>DHT20_Task</STRONG> (Thumb, 418 bytes, Stack size 96 bytes, dht20.o(i.DHT20_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = DHT20_Task &rArr; DHT20_Start_Init &rArr; DHT20_Reset_REG &rArr; DHT20_WR_Byte &rArr; DHT20_SDA_PIN_Output_Low &rArr; HAL_GPIO_Init
+<P><STRONG><a name="[50]"></a>DHT20_Task</STRONG> (Thumb, 426 bytes, Stack size 72 bytes, dht20.o(i.DHT20_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = DHT20_Task &rArr; DHT20_Start_Init &rArr; DHT20_Reset_REG &rArr; DHT20_WR_Byte &rArr; DHT20_SDA_PIN_Output_Low &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_Init

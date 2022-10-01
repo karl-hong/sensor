@@ -493,7 +493,6 @@ void DHT20_Start_Init(void)
 
 void DHT20_Task(void *argument)
 {
-	uint32_t CT_data[2];
 	volatile int  c1,t1;
 	uint8_t state = 0;
 	volatile uint8_t  Byte_1th=0;
@@ -564,23 +563,24 @@ void DHT20_Task(void *argument)
 					Stop_I2C();
 					
 					if(Calc_CRC8(CTDATA,6)==Byte_7th){
+						RetuData = 0;
 						RetuData = (RetuData|Byte_2th)<<8;
 						RetuData = (RetuData|Byte_3th)<<8;
 						RetuData = (RetuData|Byte_4th);
 						RetuData =RetuData >>4;
-						CT_data[0] = RetuData;//??
+						c1 = RetuData;//??
 						RetuData = 0;
 						RetuData = (RetuData|Byte_4th)<<8;
 						RetuData = (RetuData|Byte_5th)<<8;
 						RetuData = (RetuData|Byte_6th);
 						RetuData = RetuData&0xfffff;
-						CT_data[1] =RetuData; //??
+						t1 =RetuData; //??
 						/* get humidity and temperatrue */
-						Sensor.temperature = CT_data[1];
-						Sensor.humidity = CT_data[0];
+						Sensor.temperature = t1;
+						Sensor.humidity = c1;
 					}else{
-						CT_data[0]=0x00;
-						CT_data[1]=0x00;//???????,????????????
+						c1 = 0x00;
+						t1 = 0x00;//???????,????????????
 					}//CRC??
 					
 					state =2;
