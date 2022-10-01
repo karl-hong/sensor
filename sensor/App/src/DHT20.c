@@ -49,10 +49,6 @@ void Delay_5us(void)
 
 void Delay_1ms(uint32_t t)
 {
-   while(t--)
-  {
-    SensorDelay_us(1000);
-  }
 	osDelay(t);
 }
 
@@ -311,7 +307,6 @@ void DHT20_Read_CTdata(uint32_t *ct)
 	volatile uint8_t  Byte_5th=0;
 	volatile uint8_t  Byte_6th=0;
 	 uint32_t RetuData = 0;
-	uint16_t cnt = 0;
 	DHT20_SendAC();
 	Delay_1ms(80);
 
@@ -445,6 +440,11 @@ void DHT20_Reset_REG(uint8_t addr)
 {
 	
 	uint8_t Byte_first,Byte_second,Byte_third,Byte_fourth;
+	UNUSED(Byte_first);
+	UNUSED(Byte_second);
+	UNUSED(Byte_third);
+	UNUSED(Byte_fourth);
+	
 	I2C_Start();
 	DHT20_WR_Byte(0x70);//???0x70
 	Receive_ACK();
@@ -495,29 +495,109 @@ void DHT20_Task(void *argument)
 {
 	uint32_t CT_data[2];
 	volatile int  c1,t1;
-	
-	DHT20_GPIO_Init();
-	
-	osDelay(500);
-	
-	if((DHT20_Read_Status()&0x18)!=0x18){
-		DHT20_Start_Init();
-		osDelay(10);
-	}
+	uint8_t state = 0;
+	volatile uint8_t  Byte_1th=0;
+	volatile uint8_t  Byte_2th=0;
+	volatile uint8_t  Byte_3th=0;
+	volatile uint8_t  Byte_4th=0;
+	volatile uint8_t  Byte_5th=0;
+	volatile uint8_t  Byte_6th=0;
+	volatile uint8_t  Byte_7th=0;
+	uint32_t RetuData = 0;
+	uint8_t  CTDATA[6]={0};
 	
 	while(1)
 	{
-		//DHT20_Read_CTdata(CT_data);
-		DHT20_Read_CTdata_crc(CT_data);
-		c1 = CT_data[0];//*100*10/1024/1024;
-		t1 = CT_data[1];//*200*10/1024/1024-500;
-		Sensor.temperature = t1;
-		Sensor.humidity = c1;
-		osDelay(1000);
+			switch(state){
+				case 1:{
+					if((DHT20_Read_Status()&0x18)!=0x18){
+						DHT20_Start_Init();
+						osDelay(10);
+					}
+					state ++;
+					break;
+				}
+				
+				case 2:{
+					DHT20_SendAC();
+					state ++;
+					osDelay(80);
+					break;
+				}
+				
+				case 3:{
+					static uint16_t busyCnt = 0;
+					if(((DHT20_Read_Status()&0x80)==0x80)){
+						busyCnt ++;
+						if(busyCnt >= 1000){
+							busyCnt = 0;
+							state = 1;
+						}else{
+							osDelay(1);
+						}
+						break;
+					}
+					
+					state ++;
+					break;
+				}
+				
+				case 4:{
+					I2C_Start();
+					DHT20_WR_Byte(0x71);
+					Receive_ACK();
+					
+					CTDATA[0]=Byte_1th = DHT20_RD_Byte();//???,??????0x98,??????,bit[7]?1;???0x1C,??0x0C,??0x08???????,bit[7]?0
+					Send_ACK();
+					CTDATA[1]=Byte_2th = DHT20_RD_Byte();//??
+					Send_ACK();
+					CTDATA[2]=Byte_3th = DHT20_RD_Byte();//??
+					Send_ACK();
+					CTDATA[3]=Byte_4th = DHT20_RD_Byte();//??/??
+					Send_ACK();
+					CTDATA[4]=Byte_5th = DHT20_RD_Byte();//??
+					Send_ACK();
+					CTDATA[5]=Byte_6th = DHT20_RD_Byte();//??
+					Send_ACK();
+					Byte_7th = DHT20_RD_Byte();//CRC??
+					Send_NOT_ACK();                           //??: ?????NAK
+					Stop_I2C();
+					
+					if(Calc_CRC8(CTDATA,6)==Byte_7th){
+						RetuData = (RetuData|Byte_2th)<<8;
+						RetuData = (RetuData|Byte_3th)<<8;
+						RetuData = (RetuData|Byte_4th);
+						RetuData =RetuData >>4;
+						CT_data[0] = RetuData;//??
+						RetuData = 0;
+						RetuData = (RetuData|Byte_4th)<<8;
+						RetuData = (RetuData|Byte_5th)<<8;
+						RetuData = (RetuData|Byte_6th);
+						RetuData = RetuData&0xfffff;
+						CT_data[1] =RetuData; //??
+						/* get humidity and temperatrue */
+						Sensor.temperature = CT_data[1];
+						Sensor.humidity = CT_data[0];
+					}else{
+						CT_data[0]=0x00;
+						CT_data[1]=0x00;//???????,????????????
+					}//CRC??
+					
+					state =2;
+					osDelay(100);
+					break;
+				}
+				
+				case 0:
+				default:{
+					DHT20_GPIO_Init();
+					state = 1;
+					osDelay(500);
+					break;
+				}
+			}
 	 }
-
- }	
-
+}
 
 void DHT20_Task_Init(void)
 {
