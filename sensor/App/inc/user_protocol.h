@@ -62,6 +62,8 @@ enum {
 
 enum {
 	OPTION_QUERY_SENSOR_DATA = 1,
+	OPT_CODE_SINGLE_MODIFY_BAUDRATE = 0xfe,//单个设备修改波特率
+	OPT_CODE_MULTI_MODIFY_BAUDRATE,//批量修改波特率
 };
 
 

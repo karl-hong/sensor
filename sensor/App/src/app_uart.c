@@ -8,6 +8,7 @@
 #include "string.h"
 #include "crc8_16.h"
 #include "user_protocol.h"
+#include "iwdg.h"
 
 #define BSP_USART2_RX_MAX_LEN		10
 
@@ -51,6 +52,8 @@ volatile void checkUartBuffer(void)
 
 void AppUart2RxTask(void *arg)
 {
+	/* 使能看门狗 */
+	MX_IWDG_Init();
 	/* 使用DMA接收 */
 #if USART2_USE_DMA	
 	memset((uint8_t *)&Uart2RxBuffer, 0xff, sizeof(Uart2RxBuffer));
@@ -60,6 +63,7 @@ void AppUart2RxTask(void *arg)
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&Uart2RxBuffer, 1);
 #endif
 	while(1){
+		MX_IWDG_Refresh();//feed watch dog
 #if USART2_USE_DMA		
 		checkUartBuffer();
 #endif		
@@ -68,6 +72,7 @@ void AppUart2RxTask(void *arg)
 			g_uart2_send_data_enable = 0;
 			HAL_UART_Receive_IT(&huart2, (uint8_t *)&Uart2RxBuffer, 1);
 		}
+		user_huart_error_check();
 		osDelay(10);
 	}
 }

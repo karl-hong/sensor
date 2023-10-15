@@ -3,6 +3,11 @@
 #include "stdint.h"
 #include "stdio.h"
 
+#define DATABASE_START_ADDR         (0x0803F000)
+#define DATABASE_MAGIC              (0xaaaaaaaa)
+
+#define DEFAULT_BAUD_RATE_INDEX			(4)
+
 #define USART2_USE_DMA				0
 
 typedef struct {
@@ -15,6 +20,7 @@ typedef struct {
 	uint8_t water_sensor_state;
 	uint8_t displacement_sensor_state;
 	uint8_t smoke_sensor_state;
+	uint16_t baudRateIndex;
 	uint32_t temperature;
 	uint32_t humidity;
 	uint32_t vbat_value;
@@ -24,6 +30,10 @@ typedef struct {
 	uint8_t gSensorState;
 }Sensor_Data_t;
 
+typedef struct {
+    uint32_t magic;
+    uint32_t baudRateIndex;
+}database_t;
 
 extern Sensor_Data_t Sensor;
 

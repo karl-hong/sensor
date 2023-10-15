@@ -610,11 +610,11 @@ ARM Macro Assembler    Page 10
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=sensor\startup_stm32l433xx.d -osensor\startup_stm32l433xx.o -I.
-.\Core\Inc -IF:\experience\stm32_sensor\sensor\MDK-ARM\RTE -I"E:\Program Files 
-(x86)\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include" -I"E:\Program Files (x86)
-\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0" --predefine="__MICROLIB SETA 1" --p
-redefine="__UVISION_VERSION SETA 514" --predefine="_RTE_ SETA 1" --predefine="S
-TM32L433xx SETA 1" --list=startup_stm32l433xx.lst startup_stm32l433xx.s
+.\Core\Inc -IE:\workspace\project\sensor\sensor\MDK-ARM\RTE -I"D:\Program Files
+ (x86)\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include" -I"D:\Program Files (x86
+)\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.6.2" --predefine="__MICROLIB SETA 1" --
+predefine="__UVISION_VERSION SETA 514" --predefine="_RTE_ SETA 1" --predefine="
+STM32L433xx SETA 1" --list=startup_stm32l433xx.lst startup_stm32l433xx.s
 
 
 

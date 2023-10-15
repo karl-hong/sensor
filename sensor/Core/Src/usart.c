@@ -37,6 +37,15 @@ extern void appUart2RxCallBack(void);
 
 void AppUart2RxDMA_CPLT_CB( DMA_HandleTypeDef * _hdma);
 
+const uint32_t baudRate[]={
+  4800,
+  9600,
+  19200,
+  38400,
+  57600,
+  115200,
+};
+
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -81,14 +90,13 @@ void MX_USART2_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART2_Init 0 */
-
+//  huart2.Init.BaudRate = baudRate[Sensor.baudRateIndex];	
   /* USER CODE END USART2_Init 0 */
 
   /* USER CODE BEGIN USART2_Init 1 */
-
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = baudRate[Sensor.baudRateIndex];
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -118,10 +126,10 @@ void MX_USART3_UART_Init(void)
   /* USER CODE END USART3_Init 0 */
 
   /* USER CODE BEGIN USART3_Init 1 */
-
+//  huart3.Init.BaudRate = baudRate[Sensor.baudRateIndex];	
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 115200;//baudRate[Sensor.baudRateIndex];
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -389,6 +397,22 @@ void AppUart2ReceiveData(uint8_t *pData, uint32_t size)
 void AppUart2SendData(uint8_t *pData, uint32_t size)
 {
 	HAL_UART_Transmit(&huart2, pData, size, 0xFFFF);
+}
+
+void user_huart_error_check(void)
+{
+	static int errCnt = 0;
+	if(huart2.RxState != HAL_UART_STATE_READY){
+		return;
+	}
+	
+	if(HAL_UART_GetError(&huart2) & HAL_UART_ERROR_ORE){
+		__HAL_UART_FLUSH_DRREGISTER(&huart2);
+		__HAL_UART_CLEAR_OREFLAG(&huart2);
+		errCnt ++;
+	}
+	
+//	HAL_UART_Receive_IT(&huart2, &recData, 1);
 }
 
 int fputc(int ch, FILE *f)

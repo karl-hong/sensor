@@ -88,7 +88,7 @@ PTL_STATUS ComUnpack(ComStream_t * inStream,UnPack_t *pResult)
 	pResult->indexOfHead = indexOfHead;
 	if (nLenofActData != nLength + CMD_FIX_LEN){
 		pResult->indexOfHead = nTailPos + 1;
-		printf("[%s]length2 error!\r\n", __FUNCTION__);
+		printf("[%s]length2 error! rec length:%d, it should be length:%d\r\n", __FUNCTION__, nLength, nLenofActData);
 		return PTL_LENGTH_ERROR;
 	}
 
@@ -182,12 +182,23 @@ PTL_STATUS ComPack(const Pack_t*  pPack, ComStream_t* outStream)
 
 void user_event_process(uint8_t cmd, uint8_t opt, uint8_t *data, uint16_t lenOfData)
 {
+	printf("cmd: 0x%x, opt: 0x%x\r\n", cmd, opt);
 	switch(cmd){
 		case CMD_QUERY:{
 			switch (opt)
 			{
 				case OPTION_QUERY_SENSOR_DATA:{
 					onCmdQuerySensorData(data, lenOfData);
+					break;
+				}
+
+				case OPT_CODE_SINGLE_MODIFY_BAUDRATE:{
+					onCmdSingleModifyBaudRate(data, lenOfData);
+					break;
+				}
+
+				case OPT_CODE_MULTI_MODIFY_BAUDRATE:{
+					onCmdMultiModifyBaudRate(data, lenOfData);
 					break;
 				}
 

@@ -124,7 +124,6 @@ static int sc7a20_update_g_range(struct sc7a20_data *acc, uint8_t new_g_range)
 static int sc7a20_update_bdu(struct sc7a20_data *acc, uint8_t new_bdu)
 {
 	int err = -1;
-	uint8_t buf[2];
 	uint8_t updated_val;
 	uint8_t init_val;
 	uint8_t new_val;
@@ -155,7 +154,6 @@ error:
 static int sc7a20_update_ble(struct sc7a20_data *acc, uint8_t new_ble)
 {
 	int err = -1;
-	uint8_t buf[2];
 	uint8_t updated_val;
 	uint8_t init_val;
 	uint8_t new_val;
@@ -185,7 +183,6 @@ error:
 static int sc7a20_update_hr(struct sc7a20_data *acc, uint8_t new_hr)
 {
 	int err = -1;
-	uint8_t buf[2];
 	uint8_t updated_val;
 	uint8_t init_val;
 	uint8_t new_val;
@@ -218,7 +215,6 @@ static int sc7a20_update_odr(struct sc7a20_data *acc, int poll_interval_ms)
 {
 	int err = -1;
 	int i;
-	uint8_t buf[2];
 	uint8_t new_value;
 	uint16_t table_size =  sizeof(sc7a20_odr_table) / sizeof(sc7a20_odr_t);
 
@@ -266,7 +262,7 @@ static void sc7a20_set_interrupt(void)
 void sc7a20_init(struct sc7a20_data *acc)
 {
 	uint8_t chipId = 0;
-	uint8_t rc;
+	int rc;
 	
 	rc = sc7a20_register_read(WHO_AM_I, &chipId);
 	if(0 != rc){
@@ -368,7 +364,7 @@ int sc7a20_get_acceleration_data(struct sc7a20_data *acc, int16_t *xyz)
 				xyz[0] = xyzBuf[0];
 				xyz[1] = xyzBuf[1];
 				xyz[2] = xyzBuf[2];
-				printf("state %d: data not ready!\r\n", state);
+				//printf("state %d: data not ready!\r\n", state);
 				return err;
 			}
 			/* goto next state */

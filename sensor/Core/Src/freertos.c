@@ -27,6 +27,11 @@
 /* USER CODE BEGIN Includes */
 #include "common.h"
 #include "sc7a20.h"
+#include "stdio.h"
+#include "DHT20.h"
+#include "app_uart.h"
+#include "user_protocol.h"
+#include "user_data.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -116,6 +121,15 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
 	static uint16_t cnt = 0;
+	
+	user_protocol_init();
+	Sensor.uid[0] = HAL_GetUIDw0();
+	Sensor.uid[1] = HAL_GetUIDw1();
+	Sensor.uid[2] = HAL_GetUIDw2();
+	
+	DHT20_Task_Init();
+	AppUart2Init();
+	
 	sc7a20_init(&sc7a20_misc_data);
   /* Infinite loop */
   for(;;)
@@ -135,6 +149,7 @@ void StartDefaultTask(void *argument)
 			printf("gsensor x: %d\r\n", Sensor.gSensorData.x);
 			printf("gsensor y: %d\r\n", Sensor.gSensorData.y);
 			printf("gsensor z: %d\r\n", Sensor.gSensorData.z);
+			printf("baudRateIndex: %d\r\n", Sensor.baudRateIndex);
 			printf("uid: 0x%x%x%x\r\n", Sensor.uid[0], Sensor.uid[1], Sensor.uid[2]);
 			printf("===================================\r\n");
 		}
